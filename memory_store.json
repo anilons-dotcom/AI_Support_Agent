@@ -1,0 +1,26 @@
+{
+    "conversation_history": [
+        {
+            "user": "give a quick 5 lines text / brief from it ?",
+            "assistant": "As a Product Manager, you\u2019ll drive adoption of Fixed Income Reference Data, leveraging your Python/SQL expertise and data pipeline experience. You\u2019ll ensure client value through strategic partnerships and robust data delivery. Your background in corporate credit and risk analysis directly aligns with Bloomberg\u2019s needs.  Focus on clear communication and client-facing success.  Your experience in data integration and agile methodologies will be invaluable."
+        },
+        {
+            "user": "what is the last question i asked ?",
+            "assistant": "The last question the user asked was: \u201cWhat is the last question i asked ?\u201d"
+        },
+        {
+            "user": "tell me what was the last question user asked ?",
+            "assistant": "The user asked, \u201cWhat is the last question i asked ?\u201d"
+        },
+        {
+            "user": "do you only retain the user data asked to you in this case ?",
+            "assistant": "As a large language model, I do not retain user data. My responses are generated based on the input provided and my training data."
+        },
+        {
+            "user": "are you interracting with the rag here to extract data ?",
+            "assistant": "No, I am currently engaged in a conversation about the role of a Product Manager and the Fixed Income Reference Data product. My purpose is to provide information and assistance based on the provided context and my training data."
+        }
+    ],
+    "user_preferences": {},
+    "learned_facts": []
+}
