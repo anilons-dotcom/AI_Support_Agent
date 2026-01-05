@@ -1,11 +1,10 @@
 import os
 import csv
 import json
-import win32com.client
+# import win32com.client   # <-- EMAIL DISABLED
 from datetime import datetime, timedelta
 
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Document
-from llama_index.core.node_parser import SimpleNodeParser
 from llama_index.embeddings.ollama import OllamaEmbedding
 from llama_index.llms.ollama import Ollama
 from llama_index.core import StorageContext, load_index_from_storage
@@ -14,12 +13,12 @@ from llama_index.core import StorageContext, load_index_from_storage
 # ============================================================
 # PATHS
 # ============================================================
-#EMAIL_INDEX_DIR = "email_index"
+# EMAIL_INDEX_DIR = "email_index"   # <-- EMAIL DISABLED
 PDF_INDEX_DIR = "fixed_income_index"
 MEMORY_FILE = "memory_store.json"
 
 PDF_DIR = "C:/Users/anilo/OneDrive/pdf_source"
-CSV_DIR = "C:/Users/anilo/OneDrive/csv_source"
+# CSV_DIR = "C:/Users/anilo/OneDrive/csv_source"
 
 
 # ============================================================
@@ -59,78 +58,19 @@ def remember_fact(fact):
 
 
 # ============================================================
-# OUTLOOK EMAIL INGESTION
+# OUTLOOK EMAIL INGESTION (DISABLED)
 # ============================================================
-def read_outlook_emails(limit=200, days=30):
-    print("Reading Outlook inbox...")
-
-    outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
-    inbox = outlook.GetDefaultFolder(6)  # 6 = Inbox
-
-    messages = inbox.Items
-    messages.Sort("[ReceivedTime]", True)
-
-    cutoff = datetime.now() - timedelta(days=days)
-    emails = []
-    count = 0
-
-    for msg in messages:
-        try:
-            if msg.ReceivedTime < cutoff:
-                break
-
-            emails.append({
-                "subject": msg.Subject,
-                "sender": str(msg.SenderName),
-                "sender_email": str(msg.SenderEmailAddress),
-                "received": str(msg.ReceivedTime),
-                "body": msg.Body,
-            })
-
-            count += 1
-            if count >= limit:
-                break
-
-        except Exception:
-            continue
-
-    print(f"Loaded {len(emails)} emails.")
-    return emails
-
-
-def emails_to_documents(email_list):
-    docs = []
-    for e in email_list:
-        text = f"""
-        Subject: {e['subject']}
-        From: {e['sender']} <{e['sender_email']}>
-        Received: {e['received']}
-
-        {e['body']}
-        """
-        docs.append(Document(text=text, metadata={"source": "outlook"}))
-    return docs
-
-
-def build_email_index():
-    emails = read_outlook_emails()
-    docs = emails_to_documents(emails)
-
-    embed_model = OllamaEmbedding(model_name="nomic-embed-text")
-
-    index = VectorStoreIndex.from_documents(
-        docs,
-        embed_model=embed_model
-    )
-
-    index.storage_context.persist(persist_dir=EMAIL_INDEX_DIR)
-    print("Email index built and saved.")
-
-
-def load_email_index():
-    storage_context = StorageContext.from_defaults(persist_dir=EMAIL_INDEX_DIR)
-    embed_model = OllamaEmbedding(model_name="nomic-embed-text")
-    return load_index_from_storage(storage_context, embed_model=embed_model)
+# def read_outlook_emails(...):
+#     pass
+#
+# def emails_to_documents(...):
+#     pass
+#
+# def build_email_index():
+#     pass
+#
+# def load_email_index():
+#     pass
 
 
 # ============================================================
@@ -157,10 +97,9 @@ def build_pdf_index():
     print("Loading PDF documents...")
     pdf_docs = SimpleDirectoryReader(PDF_DIR, recursive=True).load_data()
 
-    print("Loading CSV files...")
-    csv_docs = load_csv_files(CSV_DIR)
-
-    all_docs = pdf_docs + csv_docs
+    # csv_docs = load_csv_files(CSV_DIR)
+    # all_docs = pdf_docs + csv_docs
+    all_docs = pdf_docs
 
     print(f"Total documents loaded: {len(all_docs)}")
 
@@ -182,11 +121,10 @@ def load_pdf_index():
 
 
 # ============================================================
-# MEMORY-AWARE HYBRID RAG QUERY
+# MEMORY-AWARE RAG QUERY (PDF ONLY)
 # ============================================================
 def ask_rag(question: str):
     pdf_index = load_pdf_index()
-    email_index = load_email_index()
 
     llm = Ollama(model="gemma3:1b", request_timeout=300.0)
     memory = load_memory()
@@ -209,7 +147,7 @@ def ask_rag(question: str):
     {facts_text}
     """
 
-    # PDF retrieval
+    # PDF retrieval only
     pdf_engine = pdf_index.as_query_engine(
         llm=llm,
         similarity_top_k=4,
@@ -217,23 +155,12 @@ def ask_rag(question: str):
     )
     pdf_result = pdf_engine.query(question)
 
-    # Email retrieval
-    email_engine = email_index.as_query_engine(
-        llm=llm,
-        similarity_top_k=4,
-        response_mode="compact"
-    )
-    email_result = email_engine.query(question)
-
-    # Final combined prompt
+    # Final combined prompt (EMAIL REMOVED)
     final_prompt = f"""
     {memory_context}
 
     ### Relevant PDF Context ###
     {pdf_result}
-
-    ### Relevant Email Context ###
-    {email_result}
 
     ### User Question ###
     {question}
@@ -254,10 +181,10 @@ if __name__ == "__main__":
     print("Building PDF index...")
     build_pdf_index()
 
-    print("Building Email index...")
-    build_email_index()
+    # print("Building Email index...")   # <-- DISABLED
+    # build_email_index()
 
-    print("\nHybrid Agentic RAG system ready. Ask questions (type 'exit' to quit).")
+    print("\nPDF‑only RAG system ready. Ask questions (type 'exit' to quit).")
 
     while True:
         q = input("\nYour question: ").strip()
@@ -278,7 +205,6 @@ if __name__ == "__main__":
             print("Preference saved.")
             continue
 
-        # Hybrid RAG
+        # PDF‑only RAG
         answer = ask_rag(q)
         print("\nAnswer:", answer)
-
