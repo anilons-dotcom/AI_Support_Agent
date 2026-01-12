@@ -19,6 +19,34 @@
         {
             "user": "are you interracting with the rag here to extract data ?",
             "assistant": "No, I am currently engaged in a conversation about the role of a Product Manager and the Fixed Income Reference Data product. My purpose is to provide information and assistance based on the provided context and my training data."
+        },
+        {
+            "user": "content of the pdfs here ?",
+            "assistant": "The provided text does not include any PDF content or context, so I am unable to provide any information regarding its content."
+        },
+        {
+            "user": "so what is the last question i asked ?",
+            "assistant": "The last question the user asked was: \"What is the last question I asked?\""
+        },
+        {
+            "user": "how many uqestion i have asked till now ?",
+            "assistant": "Based on the provided conversation history, the user has asked **7 questions** until this point."
+        },
+        {
+            "user": "list all those question ?",
+            "assistant": "The user has asked **7 questions** until this point:\n\n1. Give a quick 5 lines text / brief from it ?\n2. What is the last question I asked ?\n3. Tell me what was the last question user asked ?\n4. Do you only retain the user data asked to you in this case ?\n5. Are you interacting with the rag here to extract data ?\n6. Content of the PDFs here ?\n7. How many questions have I asked till now ?"
+        },
+        {
+            "user": "tell me a summary of the pdfs",
+            "assistant": "The provided text does not include any PDF content or context, so I am unable to provide a summary of the PDFs."
+        },
+        {
+            "user": "tell me content of old pdfs",
+            "assistant": "I am unable to access or provide information regarding the content of previous PDF files as the provided text does not include any PDF content or context."
+        },
+        {
+            "user": "give me a summary of the content of the pdf",
+            "assistant": "I am unable to provide a summary of the content of the PDFs as the provided text does not include any PDF content or context."
         }
     ],
     "user_preferences": {},
